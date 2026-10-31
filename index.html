@@ -1903,20 +1903,20 @@
         // 1) Comercial de até 68 segundos (cobre vinhetas de 6s, Tintas Coral 15s, 30s e Grupo Raimundo da Fonte 1:00 = 60s!)
         const isShortOr60sAd = (rawDur > 0 && rawDur <= 68 && expectedDur >= 85);
 
-        const hasMoreCandidates = (currentVideoCandidateIdx + 1 < currentCandidateVideoIds.length);
-        const vNormTitle = normalizeTextForMatch(playingTitle);
-        const hasExplicitAdKeyword = AD_KEYWORDS_BLACKLIST.some(kw => vNormTitle.includes(normalizeTextForMatch(kw)));
-
-        // 2) Comercial longo explícito
+        // 2) Comercial longo (ex: "Oito décadas - Grupo Raimundo da Fonte" de 3:03 = 183s na música Pela Última Vez de 2:42 = 162s):
+        //    duração difere em >= 15s da música oficial E o título não bate com a música (ou duração difere em >= 38s)!
         const isLongCommercialMismatch =
-          hasExplicitAdKeyword ||
-          (hasMoreCandidates && rawDur > 68 && expectedDur > 0 && Math.abs(rawDur - expectedDur) >= 35 && playingTitle && !isVideoTitleMatchingSong(playingTitle, state.currentSong));
+          (rawDur > 68 && expectedDur > 0 && Math.abs(rawDur - expectedDur) >= 15 && playingTitle && !isVideoTitleMatchingSong(playingTitle, state.currentSong));
 
         // 3) ID do vídeo em reprodução no iframe é diferente do ID solicitado (pre-roll injetado pelo YouTube)
         const isDifferentAdVideoId =
           Boolean(playingVid && currentActiveVideoId && playingVid !== currentActiveVideoId && !currentCandidateVideoIds.includes(playingVid));
 
-        const isAdPlaying = isShortOr60sAd || isLongCommercialMismatch || isDifferentAdVideoId;
+        // 4) Título do vídeo no iframe contém palavra de comercial ou não tem nenhuma palavra da música/artista
+        const isTitleAdMismatch =
+          Boolean(playingTitle && state.currentSong && !isVideoTitleMatchingSong(playingTitle, state.currentSong));
+
+        const isAdPlaying = isShortOr60sAd || isLongCommercialMismatch || isDifferentAdVideoId || isTitleAdMismatch;
 
         if (isAdPlaying) {
           isVerifiedRealSongPlaying = false;
@@ -2104,39 +2104,54 @@
       } catch (_) {}
     };
 
-    function switchToDirectFullAudioNow(song, directUrl, seekSeconds = 0, allowShortPreview = false) {
+    function switchToDirectFullAudioNow(song, directUrl, seekSeconds = 0) {
       if (!song || !directUrl || !state.currentSong || state.currentSong.id !== song.id) return;
-      // Se já estiver tocando a versão completa no activeAudio, não interrompe por um preview curto
-      if (!usingYtEngine && activeAudio.src && !activeAudio.paused && (activeAudio.duration || 0) > 65 && allowShortPreview) {
-        return;
-      }
+      const testAudio = standbyAudio;
+      testAudio.src = directUrl;
+      testAudio.preload = 'metadata';
 
-      const targetTime = usingYtEngine && ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && isVerifiedRealSongPlaying
-        ? (ytPlayer.getCurrentTime() || seekSeconds || 0)
-        : (seekSeconds || 0);
+      const onLoadedMeta = () => {
+        testAudio.removeEventListener('loadedmetadata', onLoadedMeta);
+        testAudio.removeEventListener('error', onErrorMeta);
+        if (!state.currentSong || state.currentSong.id !== song.id) return;
+        const dur = testAudio.duration || 0;
+        // NUNCA aceita faixas de 30 segundos (só aceita música completa >= 60s!)
+        if (dur < 60) return;
 
-      usingYtEngine = false;
-      clearInterval(ytProgressTimer);
-      clearTimeout(errorSwitchTimer);
-      clearTimeout(playbackWatchdogTimer);
-      clearTimeout(preRollKillerTimer);
-      stopCarPlayDurationBridge();
-      try { if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (_) {}
+        const targetTime = usingYtEngine && ytPlayer && typeof ytPlayer.getCurrentTime === 'function'
+          ? (ytPlayer.getCurrentTime() || seekSeconds || 0)
+          : (seekSeconds || 0);
 
-      activeAudio.src = directUrl;
-      if (targetTime > 1 && !allowShortPreview) {
-        try { activeAudio.currentTime = targetTime; } catch (_) {}
-      }
-      activeAudio.volume = getEffectiveVolume01();
-      activeAudio.play().then(() => {
-        state.isPlaying = true;
-        updateMediaSessionMetadata(song);
-        const hintEl = document.getElementById('txtEngineStatusHint');
-        if (hintEl) {
-          hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (song.duration || 'Oficial') + ') • CarPlay Ativo';
-        }
-        updatePlayerUi();
-      }).catch(() => {});
+        usingYtEngine = false;
+        clearInterval(ytProgressTimer);
+        clearTimeout(errorSwitchTimer);
+        clearTimeout(playbackWatchdogTimer);
+        clearTimeout(preRollKillerTimer);
+        stopCarPlayDurationBridge();
+        try { if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (_) {}
+
+        activeAudio.src = directUrl;
+        activeAudio.currentTime = targetTime > 0 ? targetTime : 0;
+        activeAudio.volume = getEffectiveVolume01();
+        activeAudio.play().then(() => {
+          state.isPlaying = true;
+          updateMediaSessionMetadata(song);
+          const hintEl = document.getElementById('txtEngineStatusHint');
+          if (hintEl) {
+            hintEl.textContent = '🚗 Áudio Nativo CarPlay & Tela Bloqueada (' + formatSec(dur) + ') • Sem Propaganda';
+          }
+          updatePlayerUi();
+        }).catch(() => {});
+      };
+
+      const onErrorMeta = () => {
+        testAudio.removeEventListener('loadedmetadata', onLoadedMeta);
+        testAudio.removeEventListener('error', onErrorMeta);
+      };
+
+      testAudio.addEventListener('loadedmetadata', onLoadedMeta);
+      testAudio.addEventListener('error', onErrorMeta);
+      testAudio.load();
     }
 
     // Extrai IDs separando canais independentes de Letra (Tier 1 = Zero Anúncios, como "Matheus Lyrics" aos 0:56 do vídeo!)
@@ -2251,68 +2266,84 @@
         }
       };
 
-      const searchTasks = [];
       const pipedHosts = [
         'https://pipedapi.rivo.lol',
         'https://yapi.vyper.me',
         'https://api.piped.private.coffee',
-        'https://pipedapi.kavin.rocks'
+        'https://pipedapi.kavin.rocks',
+        'https://pipedapi.adminforge.de'
       ];
-      pipedHosts.forEach(host => {
-        searchTasks.push((async () => {
-          const endpoint = `${host}/search?q=${encodeURIComponent(query)}&filter=videos`;
-          const res = await fetchWithTimeout(endpoint, 2600);
-          if (!res.ok) throw new Error('bad');
-          const data = await res.json();
-          const items = data.items || [];
-          const t1Lyrics = [];
-          const t2Other = [];
-          const t3Official = [];
-          items.forEach(it => {
-            const m = (it.url || '').match(/v=([a-zA-Z0-9_-]{11})/);
-            if (m && m[1]) {
-              const up = (it.uploaderName || '').toLowerCase();
-              const tit = (it.title || '').toLowerCase();
-              const isVerified = Boolean(it.uploaderVerified) || up.includes('- topic') || up.includes('vevo') || tit.includes('clipe oficial');
-              if (!isVerified && (tit.includes('letra') || tit.includes('lyrics') || tit.includes('legendado'))) {
-                t1Lyrics.push(m[1]);
-              } else if (!isVerified) {
-                t2Other.push(m[1]);
-              } else {
-                t3Official.push(m[1]);
+      for (const host of pipedHosts) {
+        try {
+          const pVidUrl = `${host}/search?q=${encodeURIComponent(query)}&filter=videos`;
+          const res = await fetchWithTimeout(pVidUrl, 3200);
+          if (res.ok) {
+            const data = await res.json();
+            const items = data.items || [];
+            const t1Lyrics = [];
+            const t2Other = [];
+            const t3Official = [];
+            items.forEach(it => {
+              const m = (it.url || '').match(/v=([a-zA-Z0-9_-]{11})/);
+              if (m && m[1]) {
+                const up = (it.uploaderName || '').toLowerCase();
+                const tit = (it.title || '').toLowerCase();
+                const isVerified = Boolean(it.uploaderVerified) || up.includes('- topic') || up.includes('vevo') || tit.includes('clipe oficial');
+                if (!isVerified && (tit.includes('letra') || tit.includes('lyrics') || tit.includes('legendado'))) {
+                  t1Lyrics.push(m[1]);
+                } else if (!isVerified) {
+                  t2Other.push(m[1]);
+                } else {
+                  t3Official.push(m[1]);
+                }
               }
+            });
+            const combined = [...t1Lyrics, ...t2Other, ...t3Official];
+            if (combined.length) {
+              videoIdsListCache[cacheKey] = combined;
+              safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
+              return combined;
             }
-          });
-          const combined = [...t1Lyrics, ...t2Other, ...t3Official];
-          if (combined.length) return combined;
-          throw new Error('empty');
-        })());
-      });
+          }
+        } catch (_) {}
+      }
 
       const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
       const proxyUrls = [
         `https://api.allorigins.win/raw?url=${encodeURIComponent(ytSearchUrl)}`,
         `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(ytSearchUrl)}`
       ];
-      proxyUrls.forEach(pUrl => {
-        searchTasks.push((async () => {
-          const res = await fetchWithTimeout(pUrl, 3200);
-          if (!res.ok) throw new Error('bad');
-          const htmlText = await res.text();
-          const ids = extractVideoIdsUniversal(htmlText);
-          if (ids.length) return ids;
-          throw new Error('empty');
-        })());
-      });
+      for (const pUrl of proxyUrls) {
+        try {
+          const res = await fetchWithTimeout(pUrl, 4500);
+          if (res.ok) {
+            const htmlText = await res.text();
+            const ids = extractVideoIdsUniversal(htmlText);
+            if (ids.length) {
+              videoIdsListCache[cacheKey] = ids;
+              safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
+              return ids;
+            }
+          }
+        } catch (_) {}
+      }
 
-      try {
-        const winnerIds = await Promise.any(searchTasks);
-        if (winnerIds && winnerIds.length) {
-          videoIdsListCache[cacheKey] = winnerIds;
-          safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
-          return winnerIds;
-        }
-      } catch (_) {}
+      const invHosts = ['https://inv.nadeko.net', 'https://yt.chocolatemoo53.com', 'https://invidious.nerdvpn.de'];
+      for (const host of invHosts) {
+        try {
+          const invUrl = `${host}/api/v1/search?q=${encodeURIComponent(query)}&type=video`;
+          const res = await fetchWithTimeout(invUrl, 3500);
+          if (res.ok) {
+            const list = await res.json();
+            const ids = (Array.isArray(list) ? list : []).map(x => x.videoId).filter(Boolean);
+            if (ids.length) {
+              videoIdsListCache[cacheKey] = ids;
+              safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
+              return ids;
+            }
+          }
+        } catch (_) {}
+      }
 
       const artKey = primaryArtist.toLowerCase();
       for (const [k, ids] of Object.entries(VERIFIED_ARTIST_VIDEOS)) {
@@ -3344,88 +3375,20 @@
 
       if (cachedDirectUrl) {
         song.directFullAudioUrl = cachedDirectUrl;
-        switchToDirectFullAudioNow(song, cachedDirectUrl, 0, false);
-        preloadNextInQueue();
-        return;
+        switchToDirectFullAudioNow(song, cachedDirectUrl, 0);
       }
 
       if (hintEl) hintEl.textContent = '⚡ Iniciando música completa (' + (song.duration || 'Completa') + ')...';
 
-      let directResolvedForThisSong = false;
-
-      // 1. Dispara IMEDIATAMENTE a busca de stream direto MP4/M4A 320kbps em paralelo (sem esperar YouTube!)
-      resolveDirectFullAudioStream(song, '').then(directUrl => {
-        if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
-          directResolvedForThisSong = true;
-          song.directFullAudioUrl = directUrl;
-          switchToDirectFullAudioNow(song, directUrl, 0, false);
-        }
-      });
-
-      // 2. Garantia Zero-Trava (950ms): se o iframe do YouTube sofrer bloqueio (Erro 150/Sandbox) e o stream 320kbps ainda não tiver chegado,
-      //    entra imediatamente com o stream M4A/MP3 direto da faixa para NUNCA ficar parado em 0:00!
-      setTimeout(async () => {
-        if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
-        if (directResolvedForThisSong || (!usingYtEngine && activeAudio.src && !activeAudio.paused)) return;
-        const ytPlayingReal = usingYtEngine && isVerifiedRealSongPlaying && ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && (ytPlayer.getCurrentTime() || 0) > 0.15;
-        if (ytPlayingReal) return;
-
-        const fallbackStream = await resolveGuaranteedPreviewStream(song);
-        if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
-        if (directResolvedForThisSong || (!usingYtEngine && activeAudio.src && !activeAudio.paused)) return;
-        if (fallbackStream) {
-          switchToDirectFullAudioNow(song, fallbackStream, 0, true);
-        }
-      }, 950);
-
       const cachedIds = getInstantVerifiedIds(song) || videoIdsListCache[cacheKey];
 
       if (ytApiReady && ytPlayer && typeof ytPlayer.loadVideoById === 'function' && Array.isArray(cachedIds) && cachedIds.length > 0) {
-        if (!directResolvedForThisSong) {
-          usingYtEngine = true;
-          currentCandidateVideoIds = cachedIds;
-          currentVideoCandidateIdx = 0;
-          currentActiveVideoId = cachedIds[0];
-
-          if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
-          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
-          ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: 0 });
-          if (typeof ytPlayer.playVideo === 'function') {
-            try { ytPlayer.playVideo(); } catch (_) {}
-          }
-          startYtProgressPoller();
-          armPreRollAdKiller();
-          armPlaybackWatchdog();
-          updatePlayerUi();
-
-          resolveDirectFullAudioStream(song, currentActiveVideoId).then(directUrl => {
-            if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
-              directResolvedForThisSong = true;
-              song.directFullAudioUrl = directUrl;
-              switchToDirectFullAudioNow(song, directUrl, 0, false);
-            }
-          });
-        }
-        preloadNextInQueue();
-        return;
-      }
-
-      const [candidateIds, playerReady] = await Promise.all([
-        resolveCandidateVideoIds(song),
-        ensureYtPlayerReady(3000)
-      ]);
-      if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
-      if (directResolvedForThisSong || (!usingYtEngine && activeAudio.src && !activeAudio.paused)) {
-        preloadNextInQueue();
-        return;
-      }
-
-      if (playerReady && ytPlayer && candidateIds.length > 0) {
         usingYtEngine = true;
-        currentCandidateVideoIds = candidateIds;
+        currentCandidateVideoIds = cachedIds;
         currentVideoCandidateIdx = 0;
-        currentActiveVideoId = candidateIds[0];
+        currentActiveVideoId = cachedIds[0];
 
+        // Inicia 100% MUDO até o checkAndSkipInStreamAd confirmar em ~75ms que o stream é a música real (e não propaganda!)
         if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
         if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
         ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: 0 });
@@ -3435,17 +3398,76 @@
         startYtProgressPoller();
         armPreRollAdKiller();
         armPlaybackWatchdog();
+        if (hintEl) {
+          hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (song.duration || 'Oficial') + ') • CarPlay Ativo';
+        }
         updatePlayerUi();
 
         resolveDirectFullAudioStream(song, currentActiveVideoId).then(directUrl => {
           if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
-            directResolvedForThisSong = true;
             song.directFullAudioUrl = directUrl;
-            switchToDirectFullAudioNow(song, directUrl, 0, false);
+            switchToDirectFullAudioNow(song, directUrl);
           }
         });
+
+        if (state.queueIndex + 1 < state.queue.length) {
+          const nextS = state.queue[state.queueIndex + 1];
+          resolveCandidateVideoIds(nextS).then(nIds => {
+            resolveDirectFullAudioStream(nextS, nIds && nIds[0] ? nIds[0] : '');
+          });
+        }
+        return;
       }
-      preloadNextInQueue();
+
+      if (ytApiReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
+        try {
+          if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
+          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
+          ytPlayer.playVideo();
+        } catch (_) {}
+      }
+
+      const [candidateIds, playerReady] = await Promise.all([
+        resolveCandidateVideoIds(song),
+        ensureYtPlayerReady(4500)
+      ]);
+      if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
+
+      if (playerReady && ytPlayer && candidateIds.length > 0) {
+        usingYtEngine = true;
+        currentCandidateVideoIds = candidateIds;
+        currentVideoCandidateIdx = 0;
+        currentActiveVideoId = candidateIds[0];
+
+        // Inicia 100% MUDO até o checkAndSkipInStreamAd confirmar em ~75ms que o stream é a música real (e não propaganda!)
+        if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
+        if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
+        ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: 0 });
+        if (typeof ytPlayer.playVideo === 'function') {
+          try { ytPlayer.playVideo(); } catch (_) {}
+        }
+        startYtProgressPoller();
+        armPreRollAdKiller();
+        armPlaybackWatchdog();
+        if (hintEl) {
+          hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (song.duration || 'Oficial') + ') • CarPlay Ativo';
+        }
+        updatePlayerUi();
+
+        resolveDirectFullAudioStream(song, currentActiveVideoId).then(directUrl => {
+          if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
+            song.directFullAudioUrl = directUrl;
+            switchToDirectFullAudioNow(song, directUrl);
+          }
+        });
+
+        if (state.queueIndex + 1 < state.queue.length) {
+          const nextS = state.queue[state.queueIndex + 1];
+          resolveCandidateVideoIds(nextS).then(nIds => {
+            resolveDirectFullAudioStream(nextS, nIds && nIds[0] ? nIds[0] : '');
+          });
+        }
+      }
     }
 
     function preloadNextInQueue() {
