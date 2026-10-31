@@ -499,22 +499,28 @@
 
   </main>
 
-  <!-- MINI PLAYER (COM SWIPE HORIZONTAL PARA PASSAR DE MÚSICA!) -->
-  <div id="barMiniPlayer" class="hidden fixed bottom-16 left-0 right-0 z-30 px-3 max-w-3xl mx-auto">
-    <div id="cardMiniPlayerSwipe" class="rounded-2xl bg-[#1c1f28]/95 backdrop-blur-md border border-white/15 p-2.5 shadow-2xl flex items-center gap-3 cursor-pointer">
-      <img id="imgMiniCover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=200&q=80" alt="Capa" class="w-11 h-11 rounded-xl object-cover border border-white/10" />
+  <!-- MINI PLAYER (SEMPRE VISÍVEL ACIMA DA BARRA INFERIOR + CONTROLE DE VOLUME RÁPIDO!) -->
+  <div id="barMiniPlayer" class="hidden fixed bottom-[62px] left-0 right-0 z-40 px-3 max-w-3xl mx-auto">
+    <div id="cardMiniPlayerSwipe" class="rounded-2xl bg-[#1c1f28]/95 backdrop-blur-md border border-white/15 p-2.5 shadow-2xl flex items-center gap-2.5 cursor-pointer">
+      <img id="imgMiniCover" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=200&q=80" alt="Capa" class="w-11 h-11 rounded-xl object-cover border border-white/10 shrink-0" />
       <div id="boxMiniInfo" class="flex-1 min-w-0">
         <div id="txtMiniTitle" class="text-xs font-bold truncate">Selecione uma música</div>
-        <div id="txtMiniArtist" class="text-[11px] text-white/60 truncate">Deslize para o lado para passar de faixa ⇄</div>
+        <div id="txtMiniArtist" class="text-[11px] text-white/60 truncate">Toque para expandir o player</div>
       </div>
-      <button id="btnMiniLike" type="button" class="p-1.5 text-lg" title="Curtir">🤍</button>
-      <button id="btnMiniPrev" type="button" class="p-1.5 text-white/80 hover:text-white" title="Anterior">
+      <!-- Controle de Volume Compacto no Mini Player -->
+      <div class="hidden sm:flex items-center gap-1.5 bg-black/30 px-2.5 py-1 rounded-xl border border-white/10" onclick="event.stopPropagation();">
+        <button id="btnMiniMuteToggle" type="button" class="text-xs hover:scale-110 transition" title="Mudo / Som">🔊</button>
+        <input id="rngMiniVolume" type="range" min="0" max="100" value="80" class="w-20 h-1.5 bg-white/20 rounded-lg cursor-pointer" title="Volume do Aplicativo" />
+        <span id="txtMiniVolumePct" class="text-[10px] font-bold text-emerald-400 w-7 text-right">80%</span>
+      </div>
+      <button id="btnMiniLike" type="button" class="p-1.5 text-lg shrink-0" title="Curtir">🤍</button>
+      <button id="btnMiniPrev" type="button" class="p-1.5 text-white/80 hover:text-white shrink-0" title="Anterior">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
       </button>
-      <button id="btnMiniPlayPause" type="button" class="w-9 h-9 rounded-full bg-[#ff0033] text-white flex items-center justify-center shadow">
+      <button id="btnMiniPlayPause" type="button" class="w-9 h-9 rounded-full bg-[#ff0033] text-white flex items-center justify-center shadow shrink-0">
         <span id="icoMiniPlay">▶</span>
       </button>
-      <button id="btnMiniNext" type="button" class="p-1.5 text-white/80 hover:text-white" title="Próxima">
+      <button id="btnMiniNext" type="button" class="p-1.5 text-white/80 hover:text-white shrink-0" title="Próxima">
         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
       </button>
     </div>
@@ -585,6 +591,17 @@
           <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
         </button>
         <button id="btnFullFwd10" type="button" class="p-2.5 rounded-full bg-white/5 hover:bg-white/15 text-xs font-bold text-white/80" title="Avançar 10s">10s ⏩</button>
+      </div>
+
+      <!-- Controle de Volume Exclusivo do Aplicativo (Independente do Volume do Windows/PC!) -->
+      <div class="flex items-center gap-2.5 bg-white/[0.05] border border-white/10 rounded-2xl px-3.5 py-2.5 mb-3">
+        <button id="btnFullMuteToggle" type="button" class="text-base hover:scale-110 transition shrink-0" title="Silenciar / Ativar Som">
+          <span id="icoFullVolume">🔊</span>
+        </button>
+        <button id="btnFullVolDown" type="button" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-extrabold text-white flex items-center justify-center shrink-0" title="Diminuir Volume">−</button>
+        <input id="rngAppVolume" type="range" min="0" max="100" value="80" class="flex-1 h-1.5 bg-white/20 rounded-lg cursor-pointer" />
+        <button id="btnFullVolUp" type="button" class="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-extrabold text-white flex items-center justify-center shrink-0" title="Aumentar Volume">+</button>
+        <span id="txtAppVolumePct" class="text-xs font-extrabold text-[#00e676] w-10 text-right shrink-0">80%</span>
       </div>
 
       <!-- Controles de Aleatório (Shuffle), Repetir (Repeat) e Rádio Infinita (Igual ao Android!) -->
@@ -1145,10 +1162,7 @@
         <span class="text-lg">🎵</span>
         <span class="text-[11px] font-semibold">Playlists</span>
       </button>
-      <button type="button" data-nav="3" class="btn-bottom-nav hidden">
-        <span>☁️</span>
-        <span>Nuvem &amp; iPhone</span>
-      </button>
+
     </div>
   </nav>
 
@@ -1263,6 +1277,8 @@
       queueIndex: -1,
       currentSong: null,
       isPlaying: false,
+      appVolume: safeGetStorage('tunevibe_app_volume_v1', 0.8),
+      isMuted: false,
       isShuffle: false,
       isRepeat: false,
       modalDraftSongs: [],
@@ -1432,6 +1448,74 @@
       return 210;
     }
 
+    function getEffectiveVolume01() {
+      if (state.isMuted) return 0;
+      const v = typeof state.appVolume === 'number' ? state.appVolume : 0.8;
+      return Math.max(0, Math.min(1, v));
+    }
+
+    function getEffectiveVolume100() {
+      return Math.round(getEffectiveVolume01() * 100);
+    }
+
+    function updateVolumeUiElements() {
+      const pct = getEffectiveVolume100();
+      const ico = (state.isMuted || pct === 0) ? '🔇' : (pct < 45 ? '🔉' : '🔊');
+      const rngFull = document.getElementById('rngAppVolume');
+      const txtFull = document.getElementById('txtAppVolumePct');
+      const icoFull = document.getElementById('icoFullVolume');
+      if (rngFull) rngFull.value = pct;
+      if (txtFull) txtFull.textContent = `${pct}%`;
+      if (icoFull) icoFull.textContent = ico;
+
+      const rngMini = document.getElementById('rngMiniVolume');
+      const txtMini = document.getElementById('txtMiniVolumePct');
+      const btnMiniMute = document.getElementById('btnMiniMuteToggle');
+      if (rngMini) rngMini.value = pct;
+      if (txtMini) txtMini.textContent = `${pct}%`;
+      if (btnMiniMute) btnMiniMute.textContent = ico;
+    }
+
+    function setAppVolume01(newVol01) {
+      const clamped = Math.max(0, Math.min(1, Number(newVol01) || 0));
+      state.appVolume = clamped;
+      state.isMuted = (clamped === 0);
+      safeSetStorage('tunevibe_app_volume_v1', clamped);
+      applyAppVolumeToPlayers();
+      updateVolumeUiElements();
+    }
+
+    function toggleAppMute() {
+      if (state.isMuted || getEffectiveVolume100() === 0) {
+        state.isMuted = false;
+        if (state.appVolume <= 0.02) state.appVolume = 0.6;
+      } else {
+        state.isMuted = true;
+      }
+      applyAppVolumeToPlayers();
+      updateVolumeUiElements();
+    }
+
+    function applyAppVolumeToPlayers() {
+      const v01 = getEffectiveVolume01();
+      const v100 = getEffectiveVolume100();
+      try {
+        activeAudio.volume = v01;
+        standbyAudio.volume = v01;
+      } catch (_) {}
+      try {
+        if (usingYtEngine && ytPlayer && isVerifiedRealSongPlaying) {
+          if (v100 === 0) {
+            if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
+            if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
+          } else {
+            if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
+            if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(v100);
+          }
+        }
+      } catch (_) {}
+    }
+
     async function requestCarPlayWakeLock() {
       if ('wakeLock' in navigator && !wakeLockSentinel) {
         try {
@@ -1508,8 +1592,7 @@
       }
       if (usingYtEngine && ytPlayer && typeof ytPlayer.playVideo === 'function') {
         try {
-          if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          applyAppVolumeToPlayers();
           ytPlayer.playVideo();
         } catch (_) {}
         if (carplayBridgeAudio.paused && carplayBridgeAudio.src) {
@@ -1881,20 +1964,14 @@
           if (typeof ytPlayer.setPlaybackRate === 'function') {
             try { ytPlayer.setPlaybackRate(1); } catch (_) {}
           }
-          if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          applyAppVolumeToPlayers();
           if (state.currentSong) updateMediaSessionMetadata(state.currentSong);
           const hintEl = document.getElementById('txtEngineStatusHint');
           if (hintEl && state.currentSong) {
             hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (state.currentSong.duration || 'Oficial') + ') • CarPlay Ativo';
           }
         } else {
-          if (typeof ytPlayer.isMuted === 'function' && ytPlayer.isMuted()) {
-            ytPlayer.unMute();
-          }
-          if (typeof ytPlayer.setVolume === 'function') {
-            ytPlayer.setVolume(100);
-          }
+          applyAppVolumeToPlayers();
         }
       } catch (_) {}
       return false;
@@ -2050,7 +2127,7 @@
       if (targetTime > 1 && !allowShortPreview) {
         try { activeAudio.currentTime = targetTime; } catch (_) {}
       }
-      activeAudio.volume = 1.0;
+      activeAudio.volume = getEffectiveVolume01();
       activeAudio.play().then(() => {
         state.isPlaying = true;
         updateMediaSessionMetadata(song);
@@ -2259,7 +2336,7 @@
         if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo();
       } catch (_) {}
       activeAudio.src = song.streamUrl;
-      activeAudio.volume = 1.0;
+      activeAudio.volume = getEffectiveVolume01();
       activeAudio.play().then(() => {
         state.isPlaying = true;
         updatePlayerUi();
@@ -3180,14 +3257,14 @@
       if (state.currentSong) renderArtistProfilesForSong(state.currentSong);
     }
 
-    function playFromList(list, index) {
+    function playFromList(list, index, openModal = false) {
       if (!list || !list.length || index < 0 || index >= list.length) return;
       state.queue = [...list];
       state.queueIndex = index;
-      playSongObject(state.queue[state.queueIndex]);
+      playSongObject(state.queue[state.queueIndex], false, openModal);
     }
 
-    async function playSongObject(song, viaCrossfade = false) {
+    async function playSongObject(song, viaCrossfade = false, openModal = false) {
       if (!song) return;
       const myLoadToken = ++currentSongLoadToken;
       previousSongObj = state.currentSong || null;
@@ -3202,7 +3279,15 @@
       requestCarPlayWakeLock();
 
       const modalEl = document.getElementById('modalFullPlayer');
-      if (modalEl) modalEl.classList.remove('hidden');
+      if (modalEl) {
+        const isAlreadyOpen = !modalEl.classList.contains('hidden');
+        if (openModal) {
+          modalEl.classList.remove('hidden');
+        }
+        if (isAlreadyOpen || openModal) {
+          try { modalEl.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { modalEl.scrollTop = 0; }
+        }
+      }
 
       const overlayTxt = document.getElementById('txtCarPlayOverlaySong');
       if (overlayTxt) overlayTxt.textContent = `${song.title} • ${song.artist}`;
@@ -3245,7 +3330,7 @@
         stopCarPlayDurationBridge();
         try { if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (_) {}
         activeAudio.src = song.streamUrl;
-        activeAudio.volume = 1.0;
+        activeAudio.volume = getEffectiveVolume01();
         activeAudio.play().then(() => {
           state.isPlaying = true;
           updatePlayerUi();
@@ -3460,8 +3545,7 @@
           if (currentActiveVideoId && (pState === -1 || pState === 5 || pState === 0)) {
             ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: ytPlayer.getCurrentTime() || 0 });
           }
-          if (typeof ytPlayer.unMute === 'function') ytPlayer.unMute();
-          if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(100);
+          applyAppVolumeToPlayers();
           ytPlayer.playVideo();
           try { if (carplayBridgeAudio.src) carplayBridgeAudio.play().catch(() => {}); } catch (_) {}
           state.isPlaying = true;
@@ -5951,6 +6035,28 @@
         document.getElementById('modalFullPlayer').classList.remove('hidden');
       });
       wireHorizontalSwipe(document.getElementById('cardMiniPlayerSwipe'), playNextTrack, playPrevTrack);
+
+      // Controles de Volume do Aplicativo (Full Player + Mini Player)
+      updateVolumeUiElements();
+      applyAppVolumeToPlayers();
+
+      document.getElementById('rngAppVolume').addEventListener('input', e => {
+        setAppVolume01(Number(e.target.value) / 100);
+      });
+      document.getElementById('rngMiniVolume').addEventListener('input', e => {
+        setAppVolume01(Number(e.target.value) / 100);
+      });
+      document.getElementById('btnFullMuteToggle').addEventListener('click', toggleAppMute);
+      document.getElementById('btnMiniMuteToggle').addEventListener('click', e => {
+        e.stopPropagation();
+        toggleAppMute();
+      });
+      document.getElementById('btnFullVolDown').addEventListener('click', () => {
+        setAppVolume01(getEffectiveVolume01() - 0.1);
+      });
+      document.getElementById('btnFullVolUp').addEventListener('click', () => {
+        setAppVolume01(getEffectiveVolume01() + 0.1);
+      });
 
       document.getElementById('btnMiniLike').addEventListener('click', () => toggleLikeSong(state.currentSong));
       document.getElementById('btnMiniPrev').addEventListener('click', playPrevTrack);
