@@ -227,8 +227,14 @@
         <h3 class="text-sm font-extrabold text-white mt-3 mb-1">🎵 Todas as Músicas Lançadas</h3>
       </div>
 
+      <!-- Indicador de Carregamento da Página Especial / Artista / Álbum -->
+      <div id="boxSpecialLoadingSpinner" class="hidden py-10 text-center space-y-2">
+        <div class="inline-block w-8 h-8 border-2 border-[#00e676] border-t-transparent rounded-full animate-spin"></div>
+        <div id="txtSpecialLoadingMsg" class="text-xs font-bold text-white/70">Carregando discografia e álbuns oficiais...</div>
+      </div>
+
       <!-- Grade Completa de Álbuns do Artista (exibida quando a aba Álbuns está ativa) -->
-      <div id="gridSpecialArtistAlbums" class="hidden grid-cols-2 sm:grid-cols-3 gap-3 mb-4"></div>
+      <div id="gridSpecialArtistAlbums" class="hidden grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4"></div>
 
       <div id="listSpecialPlaylistSongs" class="space-y-1.5"></div>
 
@@ -657,6 +663,94 @@
         </div>
         <div id="listFullRelatedSongs" class="space-y-1.5"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EQUALIZADOR & ÁUDIO HI-FI (BOTÃO DE ONDAS NO TOPO) -->
+  <div id="modalEqualizerHiFi" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="bg-[#161922] border border-white/15 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl text-[#00e676]">🎛️</span>
+          <div>
+            <h3 class="text-base font-extrabold text-white">Equalizador &amp; Áudio Hi-Fi</h3>
+            <p class="text-[11px] text-white/60">Qualidade máxima 320kbps sem propaganda</p>
+          </div>
+        </div>
+        <button id="btnCloseEqualizerModal" type="button" class="text-white/60 hover:text-white text-lg px-1">✕</button>
+      </div>
+
+      <div class="space-y-2">
+        <div class="text-xs font-bold text-emerald-400">Escolha o Perfil de Som:</div>
+        <div class="grid grid-cols-1 gap-1.5">
+          <button type="button" data-eqpreset="hifi" class="btn-eq-preset flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-bold bg-[#00e676]/20 border-[#00e676] text-[#00e676]">
+            <span>✨ Hi-Fi Estúdio 320kbps (Padrão)</span>
+            <span>✓</span>
+          </button>
+          <button type="button" data-eqpreset="bass" class="btn-eq-preset flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-bold bg-white/5 border-white/10 text-white/85 hover:bg-white/10">
+            <span>🔊 Graves Potentes &amp; Paredão</span>
+            <span></span>
+          </button>
+          <button type="button" data-eqpreset="live" class="btn-eq-preset flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-bold bg-white/5 border-white/10 text-white/85 hover:bg-white/10">
+            <span>🤠 Sertanejo &amp; Shows Ao Vivo</span>
+            <span></span>
+          </button>
+          <button type="button" data-eqpreset="car" class="btn-eq-preset flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-bold bg-white/5 border-white/10 text-white/85 hover:bg-white/10">
+            <span>🚗 Som Automotivo / CarPlay Boost</span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+
+      <button id="btnDoneEqualizerModal" type="button" class="w-full py-2.5 rounded-xl bg-[#00e676] text-black font-extrabold text-xs">
+        Concluído ✓
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: TRANSMITIR ÁUDIO / CAST / CARPLAY (BOTÃO CAST NO TOPO IGUAL AO ANDROID) -->
+  <div id="modalCastDevices" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+    <div class="bg-[#161922] border border-white/15 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xl text-sky-400">📡</span>
+          <div>
+            <h3 class="text-base font-extrabold text-white">Conectar &amp; Transmitir</h3>
+            <p class="text-[11px] text-white/60">CarPlay, AirPlay, Bluetooth e Smart TV</p>
+          </div>
+        </div>
+        <button id="btnCloseCastModal" type="button" class="text-white/60 hover:text-white text-lg px-1">✕</button>
+      </div>
+
+      <div class="space-y-2">
+        <button id="btnCastAirPlayAudio" type="button" class="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-left transition">
+          <span class="text-xl">🍏</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-extrabold text-white">AirPlay &amp; Bluetooth (iPhone / Mac)</div>
+            <div class="text-[11px] text-white/60">Enviar som para caixa Bluetooth, AirPods ou Som do Carro</div>
+          </div>
+        </button>
+
+        <button id="btnCastOpenCarPlayMode" type="button" class="w-full flex items-center gap-3 p-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-left transition">
+          <span class="text-xl">🚗</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-extrabold text-emerald-300">Modo CarPlay (Tela Preta Automotiva)</div>
+            <div class="text-[11px] text-white/65">Apaga o brilho da tela mantendo o áudio e controles no painel</div>
+          </div>
+        </button>
+
+        <button id="btnCastOpenSmartTv" type="button" class="w-full flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-left transition">
+          <span class="text-xl">📺</span>
+          <div class="flex-1 min-w-0">
+            <div class="text-xs font-extrabold text-white">Transmitir na Smart TV (YouTube TV)</div>
+            <div class="text-[11px] text-white/60">Abre a música atual pronta para enviar à TV</div>
+          </div>
+        </button>
+      </div>
+
+      <button id="btnDoneCastModal" type="button" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs">
+        Fechar
+      </button>
     </div>
   </div>
 
@@ -1488,7 +1582,7 @@
         return directAudioCache[cacheKey];
       }
 
-      const fetchWithTimeout = async (url, ms = 2400) => {
+      const fetchWithTimeout = async (url, ms = 4200) => {
         const ctrl = new AbortController();
         const t = setTimeout(() => ctrl.abort(), ms);
         try {
@@ -1504,7 +1598,7 @@
 
       const tasks = [];
 
-      // Rota 1 (Paralela): 7 servidores Piped CDN disputando em paralelo (Promise.any) para entregar o stream M4A em <800ms!
+      // Rota 1 (Paralela): Servidores Piped CDN disputando em paralelo
       if (videoId && videoId.length === 11) {
         const pipedHosts = [
           'https://pipedapi.rivo.lol',
@@ -1517,7 +1611,8 @@
         ];
         pipedHosts.forEach(host => {
           tasks.push((async () => {
-            const res = await fetchWithTimeout(`${host}/streams/${videoId}`, 2300);
+            const streamEndpoint = `${host}/streams/${videoId}`;
+            const res = await fetchWithTimeout(streamEndpoint, 3200);
             const data = await res.json();
             const streams = data.audioStreams || [];
             const m4a = streams.find(s => (s.mimeType || '').includes('mp4') && s.url && !s.url.includes('googlevideo.com')) ||
@@ -1528,35 +1623,48 @@
         });
       }
 
-      // Rota 2 (Paralela): JioSaavn CDN 320kbps MP4/M4A (DES-ECB '38346591') -> Áudio puro de gravadora sem 1 segundo de anúncio!
-      const cleanTitle = (song.title || '').replace(/\s*[\(\[][^\)\]]*[\)\]]/g, '').trim();
+      // Rota 2 (Paralela): JioSaavn CDN 320kbps MP4/M4A (com limpeza de "Pot-Pourri:", barras "/" e acentos para achar 100% das músicas!)
+      const rawTitleClean = (song.title || '')
+        .replace(/^pot-?pourri\s*:\s*/i, '')
+        .replace(/\s*[\(\[][^\)\]]*[\)\]]/g, '')
+        .split('/')[0]
+        .split(' - ')[0]
+        .trim();
       const mainArtist = parseSongArtists(song.artist, song.title)[0] || '';
-      const saavnQuery = encodeURIComponent(`${cleanTitle} ${mainArtist}`.trim());
-      const saavnApis = [
-        `https://saavn.dev/api/search/songs?query=${saavnQuery}&limit=5`,
-        `https://jiosaavn-api-privatecvc2.vercel.app/search/songs?query=${saavnQuery}&limit=5`
+      const q1 = `${rawTitleClean} ${mainArtist}`.trim();
+      const q2 = q1.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const queries = Array.from(new Set([q1, q2])).filter(Boolean);
+
+      const saavnBases = [
+        'https://saavn.dev/api/search/songs?limit=8&query=',
+        'https://jiosaavn-api-privatecvc2.vercel.app/search/songs?limit=8&query=',
+        'https://saavn.sumit.co/api/search/songs?limit=8&query='
       ];
-      saavnApis.forEach(apiUrl => {
-        tasks.push((async () => {
-          const res = await fetchWithTimeout(apiUrl, 2400);
-          const json = await res.json();
-          const results = (json.data && json.data.results) || json.results || [];
-          for (const item of results) {
-            const itemDur = Number(item.duration || 0);
-            if (itemDur > 0 && itemDur < 65) continue;
-            const dlList = item.downloadUrl || item.media_preview_url || [];
-            if (Array.isArray(dlList) && dlList.length) {
-              const best = dlList[dlList.length - 1];
-              const url = (typeof best === 'string') ? best : (best.url || best.link || '');
-              if (url && url.startsWith('http')) return url.replace(/^http:/i, 'https:');
+
+      queries.forEach(qStr => {
+        const encQ = encodeURIComponent(qStr);
+        saavnBases.forEach(base => {
+          tasks.push((async () => {
+            const res = await fetchWithTimeout(base + encQ, 4200);
+            const json = await res.json();
+            const results = (json.data && json.data.results) || json.results || [];
+            for (const item of results) {
+              const itemDur = Number(item.duration || 0);
+              if (itemDur > 0 && itemDur < 55) continue;
+              const dlList = item.downloadUrl || item.media_preview_url || [];
+              if (Array.isArray(dlList) && dlList.length) {
+                const best = dlList[dlList.length - 1];
+                const url = (typeof best === 'string') ? best : (best.url || best.link || '');
+                if (url && url.startsWith('http')) return url.replace(/^http:/i, 'https:');
+              }
+              if (item.encrypted_media_url) {
+                const dec = decryptSaavnMediaUrl(item.encrypted_media_url);
+                if (dec.length) return dec[0];
+              }
             }
-            if (item.encrypted_media_url) {
-              const dec = decryptSaavnMediaUrl(item.encrypted_media_url);
-              if (dec.length) return dec[0];
-            }
-          }
-          throw new Error('no-saavn');
-        })());
+            throw new Error('no-saavn');
+          })());
+        });
       });
 
       if (tasks.length) {
@@ -1570,6 +1678,41 @@
         } catch (_) {}
       }
 
+      return null;
+    }
+
+    // Fallback instantâneo de stream M4A/MP3 direto da Apple/Deezer quando o YouTube IFrame é bloqueado (Erro 150 / Sandbox) e a faixa não está no Saavn
+    async function resolveGuaranteedPreviewStream(song) {
+      if (!song) return null;
+      if (song.previewUrl && song.previewUrl.startsWith('http')) return song.previewUrl;
+      const rawTitleClean = (song.title || '')
+        .replace(/^pot-?pourri\s*:\s*/i, '')
+        .replace(/\s*[\(\[][^\)\]]*[\)\]]/g, '')
+        .split('/')[0]
+        .trim();
+      const mainArtist = parseSongArtists(song.artist, song.title)[0] || '';
+      const q = `${rawTitleClean} ${mainArtist}`.trim();
+      try {
+        const [itRes, dzRes] = await Promise.all([
+          fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&country=BR&limit=5`)
+            .then(r => r.ok ? r.json() : null).catch(() => null),
+          fetchDeezerJsonp(`/search/track?q=${encodeURIComponent(q)}&limit=5`, 3000)
+        ]);
+        if (itRes && Array.isArray(itRes.results)) {
+          const hit = itRes.results.find(x => x.previewUrl);
+          if (hit && hit.previewUrl) {
+            song.previewUrl = hit.previewUrl;
+            return hit.previewUrl;
+          }
+        }
+        if (dzRes && Array.isArray(dzRes.data)) {
+          const hit = dzRes.data.find(x => x.preview);
+          if (hit && hit.preview) {
+            song.previewUrl = hit.preview;
+            return hit.preview;
+          }
+        }
+      } catch (_) {}
       return null;
     }
 
@@ -1677,20 +1820,20 @@
         // 1) Comercial de até 68 segundos (cobre vinhetas de 6s, Tintas Coral 15s, 30s e Grupo Raimundo da Fonte 1:00 = 60s!)
         const isShortOr60sAd = (rawDur > 0 && rawDur <= 68 && expectedDur >= 85);
 
-        // 2) Comercial longo (ex: "Oito décadas - Grupo Raimundo da Fonte" de 3:03 = 183s na música Pela Última Vez de 2:42 = 162s):
-        //    duração difere em >= 15s da música oficial E o título não bate com a música (ou duração difere em >= 38s)!
+        const hasMoreCandidates = (currentVideoCandidateIdx + 1 < currentCandidateVideoIds.length);
+        const vNormTitle = normalizeTextForMatch(playingTitle);
+        const hasExplicitAdKeyword = AD_KEYWORDS_BLACKLIST.some(kw => vNormTitle.includes(normalizeTextForMatch(kw)));
+
+        // 2) Comercial longo explícito
         const isLongCommercialMismatch =
-          (rawDur > 68 && expectedDur > 0 && Math.abs(rawDur - expectedDur) >= 15 && playingTitle && !isVideoTitleMatchingSong(playingTitle, state.currentSong));
+          hasExplicitAdKeyword ||
+          (hasMoreCandidates && rawDur > 68 && expectedDur > 0 && Math.abs(rawDur - expectedDur) >= 35 && playingTitle && !isVideoTitleMatchingSong(playingTitle, state.currentSong));
 
         // 3) ID do vídeo em reprodução no iframe é diferente do ID solicitado (pre-roll injetado pelo YouTube)
         const isDifferentAdVideoId =
           Boolean(playingVid && currentActiveVideoId && playingVid !== currentActiveVideoId && !currentCandidateVideoIds.includes(playingVid));
 
-        // 4) Título do vídeo no iframe contém palavra de comercial ou não tem nenhuma palavra da música/artista
-        const isTitleAdMismatch =
-          Boolean(playingTitle && state.currentSong && !isVideoTitleMatchingSong(playingTitle, state.currentSong));
-
-        const isAdPlaying = isShortOr60sAd || isLongCommercialMismatch || isDifferentAdVideoId || isTitleAdMismatch;
+        const isAdPlaying = isShortOr60sAd || isLongCommercialMismatch || isDifferentAdVideoId;
 
         if (isAdPlaying) {
           isVerifiedRealSongPlaying = false;
@@ -1884,53 +2027,39 @@
       } catch (_) {}
     };
 
-    function switchToDirectFullAudioNow(song, directUrl, seekSeconds = 0) {
+    function switchToDirectFullAudioNow(song, directUrl, seekSeconds = 0, allowShortPreview = false) {
       if (!song || !directUrl || !state.currentSong || state.currentSong.id !== song.id) return;
-      const testAudio = standbyAudio;
-      testAudio.src = directUrl;
-      testAudio.preload = 'metadata';
+      // Se já estiver tocando a versão completa no activeAudio, não interrompe por um preview curto
+      if (!usingYtEngine && activeAudio.src && !activeAudio.paused && (activeAudio.duration || 0) > 65 && allowShortPreview) {
+        return;
+      }
 
-      const onLoadedMeta = () => {
-        testAudio.removeEventListener('loadedmetadata', onLoadedMeta);
-        testAudio.removeEventListener('error', onErrorMeta);
-        if (!state.currentSong || state.currentSong.id !== song.id) return;
-        const dur = testAudio.duration || 0;
-        if (dur < 60) return;
+      const targetTime = usingYtEngine && ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && isVerifiedRealSongPlaying
+        ? (ytPlayer.getCurrentTime() || seekSeconds || 0)
+        : (seekSeconds || 0);
 
-        const targetTime = usingYtEngine && ytPlayer && typeof ytPlayer.getCurrentTime === 'function'
-          ? (ytPlayer.getCurrentTime() || seekSeconds || 0)
-          : (seekSeconds || 0);
+      usingYtEngine = false;
+      clearInterval(ytProgressTimer);
+      clearTimeout(errorSwitchTimer);
+      clearTimeout(playbackWatchdogTimer);
+      clearTimeout(preRollKillerTimer);
+      stopCarPlayDurationBridge();
+      try { if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (_) {}
 
-        usingYtEngine = false;
-        clearInterval(ytProgressTimer);
-        clearTimeout(errorSwitchTimer);
-        clearTimeout(playbackWatchdogTimer);
-        clearTimeout(preRollKillerTimer);
-        stopCarPlayDurationBridge();
-        try { if (ytPlayer && ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (_) {}
-
-        activeAudio.src = directUrl;
-        activeAudio.currentTime = targetTime > 0 ? targetTime : 0;
-        activeAudio.volume = 1.0;
-        activeAudio.play().then(() => {
-          state.isPlaying = true;
-          updateMediaSessionMetadata(song);
-          const hintEl = document.getElementById('txtEngineStatusHint');
-          if (hintEl) {
-            hintEl.textContent = '🚗 Áudio Nativo CarPlay & Tela Bloqueada (' + formatSec(dur) + ') • Sem Propaganda';
-          }
-          updatePlayerUi();
-        }).catch(() => {});
-      };
-
-      const onErrorMeta = () => {
-        testAudio.removeEventListener('loadedmetadata', onLoadedMeta);
-        testAudio.removeEventListener('error', onErrorMeta);
-      };
-
-      testAudio.addEventListener('loadedmetadata', onLoadedMeta);
-      testAudio.addEventListener('error', onErrorMeta);
-      testAudio.load();
+      activeAudio.src = directUrl;
+      if (targetTime > 1 && !allowShortPreview) {
+        try { activeAudio.currentTime = targetTime; } catch (_) {}
+      }
+      activeAudio.volume = 1.0;
+      activeAudio.play().then(() => {
+        state.isPlaying = true;
+        updateMediaSessionMetadata(song);
+        const hintEl = document.getElementById('txtEngineStatusHint');
+        if (hintEl) {
+          hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (song.duration || 'Oficial') + ') • CarPlay Ativo';
+        }
+        updatePlayerUi();
+      }).catch(() => {});
     }
 
     // Extrai IDs separando canais independentes de Letra (Tier 1 = Zero Anúncios, como "Matheus Lyrics" aos 0:56 do vídeo!)
@@ -2045,82 +2174,68 @@
         }
       };
 
+      const searchTasks = [];
       const pipedHosts = [
         'https://pipedapi.rivo.lol',
         'https://yapi.vyper.me',
         'https://api.piped.private.coffee',
-        'https://pipedapi.kavin.rocks',
-        'https://pipedapi.adminforge.de'
+        'https://pipedapi.kavin.rocks'
       ];
-      for (const host of pipedHosts) {
-        try {
-          const res = await fetchWithTimeout(`${host}/search?q=${encodeURIComponent(query)}&filter=videos`, 3200);
-          if (res.ok) {
-            const data = await res.json();
-            const items = data.items || [];
-            const t1Lyrics = [];
-            const t2Other = [];
-            const t3Official = [];
-            items.forEach(it => {
-              const m = (it.url || '').match(/v=([a-zA-Z0-9_-]{11})/);
-              if (m && m[1]) {
-                const up = (it.uploaderName || '').toLowerCase();
-                const tit = (it.title || '').toLowerCase();
-                const isVerified = Boolean(it.uploaderVerified) || up.includes('- topic') || up.includes('vevo') || tit.includes('clipe oficial');
-                if (!isVerified && (tit.includes('letra') || tit.includes('lyrics') || tit.includes('legendado'))) {
-                  t1Lyrics.push(m[1]);
-                } else if (!isVerified) {
-                  t2Other.push(m[1]);
-                } else {
-                  t3Official.push(m[1]);
-                }
+      pipedHosts.forEach(host => {
+        searchTasks.push((async () => {
+          const endpoint = `${host}/search?q=${encodeURIComponent(query)}&filter=videos`;
+          const res = await fetchWithTimeout(endpoint, 2600);
+          if (!res.ok) throw new Error('bad');
+          const data = await res.json();
+          const items = data.items || [];
+          const t1Lyrics = [];
+          const t2Other = [];
+          const t3Official = [];
+          items.forEach(it => {
+            const m = (it.url || '').match(/v=([a-zA-Z0-9_-]{11})/);
+            if (m && m[1]) {
+              const up = (it.uploaderName || '').toLowerCase();
+              const tit = (it.title || '').toLowerCase();
+              const isVerified = Boolean(it.uploaderVerified) || up.includes('- topic') || up.includes('vevo') || tit.includes('clipe oficial');
+              if (!isVerified && (tit.includes('letra') || tit.includes('lyrics') || tit.includes('legendado'))) {
+                t1Lyrics.push(m[1]);
+              } else if (!isVerified) {
+                t2Other.push(m[1]);
+              } else {
+                t3Official.push(m[1]);
               }
-            });
-            const combined = [...t1Lyrics, ...t2Other, ...t3Official];
-            if (combined.length) {
-              videoIdsListCache[cacheKey] = combined;
-              safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
-              return combined;
             }
-          }
-        } catch (_) {}
-      }
+          });
+          const combined = [...t1Lyrics, ...t2Other, ...t3Official];
+          if (combined.length) return combined;
+          throw new Error('empty');
+        })());
+      });
 
       const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
       const proxyUrls = [
         `https://api.allorigins.win/raw?url=${encodeURIComponent(ytSearchUrl)}`,
         `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(ytSearchUrl)}`
       ];
-      for (const pUrl of proxyUrls) {
-        try {
-          const res = await fetchWithTimeout(pUrl, 4500);
-          if (res.ok) {
-            const htmlText = await res.text();
-            const ids = extractVideoIdsUniversal(htmlText);
-            if (ids.length) {
-              videoIdsListCache[cacheKey] = ids;
-              safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
-              return ids;
-            }
-          }
-        } catch (_) {}
-      }
+      proxyUrls.forEach(pUrl => {
+        searchTasks.push((async () => {
+          const res = await fetchWithTimeout(pUrl, 3200);
+          if (!res.ok) throw new Error('bad');
+          const htmlText = await res.text();
+          const ids = extractVideoIdsUniversal(htmlText);
+          if (ids.length) return ids;
+          throw new Error('empty');
+        })());
+      });
 
-      const invHosts = ['https://inv.nadeko.net', 'https://yt.chocolatemoo53.com', 'https://invidious.nerdvpn.de'];
-      for (const host of invHosts) {
-        try {
-          const res = await fetchWithTimeout(`${host}/api/v1/search?q=${encodeURIComponent(query)}&type=video`, 3500);
-          if (res.ok) {
-            const list = await res.json();
-            const ids = (Array.isArray(list) ? list : []).map(x => x.videoId).filter(Boolean);
-            if (ids.length) {
-              videoIdsListCache[cacheKey] = ids;
-              safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
-              return ids;
-            }
-          }
-        } catch (_) {}
-      }
+      try {
+        const winnerIds = await Promise.any(searchTasks);
+        if (winnerIds && winnerIds.length) {
+          videoIdsListCache[cacheKey] = winnerIds;
+          safeSetStorage('tunevibe_vidlist_cache_v14', videoIdsListCache);
+          return winnerIds;
+        }
+      } catch (_) {}
 
       const artKey = primaryArtist.toLowerCase();
       for (const [k, ids] of Object.entries(VERIFIED_ARTIST_VIDEOS)) {
@@ -2292,7 +2407,17 @@
           unique.push(r);
         }
       });
-      return unique.length ? unique : [rawArtist || 'Artista'];
+      const filteredDuos = unique.filter(item => {
+        const itemLow = item.toLowerCase().trim();
+        if (itemLow.includes('&') || itemLow.includes(' e ')) return true;
+        return !unique.some(other => {
+          const otherLow = other.toLowerCase().trim();
+          if (otherLow === itemLow) return false;
+          const parts = otherLow.split(/\s*(?:&|\be\b)\s*/);
+          return parts.includes(itemLow);
+        });
+      });
+      return filteredDuos.length ? filteredDuos : (unique.length ? unique : [rawArtist || 'Artista']);
     }
 
     function convertGoogleDriveUrl(rawUrl) {
@@ -2430,6 +2555,7 @@
             duration: dur,
             albumArt: art,
             streamUrl: '',
+            previewUrl: it.previewUrl || '',
             albumName: it.collectionName || '',
             genre: it.primaryGenreName || 'Música',
             year: (it.releaseDate || '').slice(0, 4),
@@ -2461,6 +2587,7 @@
             duration: dur,
             albumArt: art,
             streamUrl: '',
+            previewUrl: it.preview || '',
             albumName: (it.album && it.album.title) || '',
             genre: 'Música',
             year: '',
@@ -3132,63 +3259,81 @@
 
       if (cachedDirectUrl) {
         song.directFullAudioUrl = cachedDirectUrl;
-        switchToDirectFullAudioNow(song, cachedDirectUrl, 0);
+        switchToDirectFullAudioNow(song, cachedDirectUrl, 0, false);
+        preloadNextInQueue();
+        return;
       }
 
       if (hintEl) hintEl.textContent = '⚡ Iniciando música completa (' + (song.duration || 'Completa') + ')...';
 
+      let directResolvedForThisSong = false;
+
+      // 1. Dispara IMEDIATAMENTE a busca de stream direto MP4/M4A 320kbps em paralelo (sem esperar YouTube!)
+      resolveDirectFullAudioStream(song, '').then(directUrl => {
+        if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
+          directResolvedForThisSong = true;
+          song.directFullAudioUrl = directUrl;
+          switchToDirectFullAudioNow(song, directUrl, 0, false);
+        }
+      });
+
+      // 2. Garantia Zero-Trava (950ms): se o iframe do YouTube sofrer bloqueio (Erro 150/Sandbox) e o stream 320kbps ainda não tiver chegado,
+      //    entra imediatamente com o stream M4A/MP3 direto da faixa para NUNCA ficar parado em 0:00!
+      setTimeout(async () => {
+        if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
+        if (directResolvedForThisSong || (!usingYtEngine && activeAudio.src && !activeAudio.paused)) return;
+        const ytPlayingReal = usingYtEngine && isVerifiedRealSongPlaying && ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && (ytPlayer.getCurrentTime() || 0) > 0.15;
+        if (ytPlayingReal) return;
+
+        const fallbackStream = await resolveGuaranteedPreviewStream(song);
+        if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
+        if (directResolvedForThisSong || (!usingYtEngine && activeAudio.src && !activeAudio.paused)) return;
+        if (fallbackStream) {
+          switchToDirectFullAudioNow(song, fallbackStream, 0, true);
+        }
+      }, 950);
+
       const cachedIds = getInstantVerifiedIds(song) || videoIdsListCache[cacheKey];
 
       if (ytApiReady && ytPlayer && typeof ytPlayer.loadVideoById === 'function' && Array.isArray(cachedIds) && cachedIds.length > 0) {
-        usingYtEngine = true;
-        currentCandidateVideoIds = cachedIds;
-        currentVideoCandidateIdx = 0;
-        currentActiveVideoId = cachedIds[0];
+        if (!directResolvedForThisSong) {
+          usingYtEngine = true;
+          currentCandidateVideoIds = cachedIds;
+          currentVideoCandidateIdx = 0;
+          currentActiveVideoId = cachedIds[0];
 
-        // Inicia 100% MUDO até o checkAndSkipInStreamAd confirmar em ~75ms que o stream é a música real (e não propaganda!)
-        if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
-        if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
-        ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: 0 });
-        if (typeof ytPlayer.playVideo === 'function') {
-          try { ytPlayer.playVideo(); } catch (_) {}
-        }
-        startYtProgressPoller();
-        armPreRollAdKiller();
-        armPlaybackWatchdog();
-        if (hintEl) {
-          hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (song.duration || 'Oficial') + ') • CarPlay Ativo';
-        }
-        updatePlayerUi();
-
-        resolveDirectFullAudioStream(song, currentActiveVideoId).then(directUrl => {
-          if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
-            song.directFullAudioUrl = directUrl;
-            switchToDirectFullAudioNow(song, directUrl);
-          }
-        });
-
-        if (state.queueIndex + 1 < state.queue.length) {
-          const nextS = state.queue[state.queueIndex + 1];
-          resolveCandidateVideoIds(nextS).then(nIds => {
-            resolveDirectFullAudioStream(nextS, nIds && nIds[0] ? nIds[0] : '');
-          });
-        }
-        return;
-      }
-
-      if (ytApiReady && ytPlayer && typeof ytPlayer.playVideo === 'function') {
-        try {
           if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
           if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
-          ytPlayer.playVideo();
-        } catch (_) {}
+          ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: 0 });
+          if (typeof ytPlayer.playVideo === 'function') {
+            try { ytPlayer.playVideo(); } catch (_) {}
+          }
+          startYtProgressPoller();
+          armPreRollAdKiller();
+          armPlaybackWatchdog();
+          updatePlayerUi();
+
+          resolveDirectFullAudioStream(song, currentActiveVideoId).then(directUrl => {
+            if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
+              directResolvedForThisSong = true;
+              song.directFullAudioUrl = directUrl;
+              switchToDirectFullAudioNow(song, directUrl, 0, false);
+            }
+          });
+        }
+        preloadNextInQueue();
+        return;
       }
 
       const [candidateIds, playerReady] = await Promise.all([
         resolveCandidateVideoIds(song),
-        ensureYtPlayerReady(4500)
+        ensureYtPlayerReady(3000)
       ]);
       if (myLoadToken !== currentSongLoadToken || !state.currentSong || state.currentSong.id !== song.id) return;
+      if (directResolvedForThisSong || (!usingYtEngine && activeAudio.src && !activeAudio.paused)) {
+        preloadNextInQueue();
+        return;
+      }
 
       if (playerReady && ytPlayer && candidateIds.length > 0) {
         usingYtEngine = true;
@@ -3196,7 +3341,6 @@
         currentVideoCandidateIdx = 0;
         currentActiveVideoId = candidateIds[0];
 
-        // Inicia 100% MUDO até o checkAndSkipInStreamAd confirmar em ~75ms que o stream é a música real (e não propaganda!)
         if (typeof ytPlayer.mute === 'function') ytPlayer.mute();
         if (typeof ytPlayer.setVolume === 'function') ytPlayer.setVolume(0);
         ytPlayer.loadVideoById({ videoId: currentActiveVideoId, startSeconds: 0 });
@@ -3206,25 +3350,17 @@
         startYtProgressPoller();
         armPreRollAdKiller();
         armPlaybackWatchdog();
-        if (hintEl) {
-          hintEl.textContent = '🛡️ Áudio Completo Sem Anúncios (' + (song.duration || 'Oficial') + ') • CarPlay Ativo';
-        }
         updatePlayerUi();
 
         resolveDirectFullAudioStream(song, currentActiveVideoId).then(directUrl => {
           if (directUrl && myLoadToken === currentSongLoadToken && state.currentSong && state.currentSong.id === song.id) {
+            directResolvedForThisSong = true;
             song.directFullAudioUrl = directUrl;
-            switchToDirectFullAudioNow(song, directUrl);
+            switchToDirectFullAudioNow(song, directUrl, 0, false);
           }
         });
-
-        if (state.queueIndex + 1 < state.queue.length) {
-          const nextS = state.queue[state.queueIndex + 1];
-          resolveCandidateVideoIds(nextS).then(nIds => {
-            resolveDirectFullAudioStream(nextS, nIds && nIds[0] ? nIds[0] : '');
-          });
-        }
       }
+      preloadNextInQueue();
     }
 
     function preloadNextInQueue() {
@@ -3567,12 +3703,21 @@
         } catch (_) {}
       }
 
-      // 3. Lyrics.ovh
+      // 3. Lyrics.ovh (filtrando mensagens em francês de letra ausente)
       try {
         const oRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artists[0])}/${encodeURIComponent(noParens)}`);
         if (oRes.ok) {
           const oData = await oRes.json();
-          if (oData.lyrics && oData.lyrics.trim().length > 35) return oData.lyrics.trim();
+          const rawLyr = (oData.lyrics || '').trim();
+          const lowLyr = rawLyr.toLowerCase();
+          if (
+            rawLyr.length > 35 &&
+            !lowLyr.includes('désolé') &&
+            !lowLyr.includes('pas encore les paroles') &&
+            !lowLyr.includes('paroles de ')
+          ) {
+            return rawLyr;
+          }
         }
       } catch (_) {}
 
@@ -3593,18 +3738,30 @@
         }
       });
 
-      // Busca Músicas Relacionadas intercalando OUTRAS duplas/bandas do mesmo estilo!
+      // Busca Músicas Relacionadas intercalando artistas/duplas REAIS do mesmo estilo (via Deezer Related Artists + fallback inteligente)!
       const parsedArtists = parseSongArtists(song.artist, song.title);
       const mainArtist = parsedArtists[0];
+      let dynamicPeers = [...parsedArtists.slice(1)];
+      try {
+        const artSearch = await fetchDeezerJsonp(`/search/artist?q=${encodeURIComponent(mainArtist)}&limit=1`, 2500);
+        const artId = artSearch && artSearch.data && artSearch.data[0] && artSearch.data[0].id;
+        if (artId) {
+          const relArt = await fetchDeezerJsonp(`/artist/${artId}/related?limit=6`, 2500);
+          if (relArt && Array.isArray(relArt.data)) {
+            relArt.data.forEach(a => {
+              if (a && a.name) dynamicPeers.push(a.name);
+            });
+          }
+        }
+      } catch (_) {}
       const peers = [
-        ...parsedArtists.slice(1),
+        ...dynamicPeers,
         'Henrique & Juliano',
         'Jorge & Mateus',
         'Zé Neto & Cristiano',
-        'Guilherme & Benuto',
-        'Felipe & Rodrigo',
-        'Zé Vaqueiro'
-      ].filter(p => p.toLowerCase() !== mainArtist.toLowerCase());
+        'Hugo & Guilherme',
+        'Felipe & Rodrigo'
+      ].filter((p, i, arr) => p && p.toLowerCase() !== mainArtist.toLowerCase() && arr.findIndex(x => x.toLowerCase() === p.toLowerCase()) === i);
 
       const [sameList, simList, artistAlbums] = await Promise.all([
         fetchSingleTermTracks(mainArtist, 'BR', 120),
@@ -4011,6 +4168,7 @@
                 duration: durStr,
                 albumArt: album.coverArt,
                 streamUrl: '',
+                previewUrl: item.previewUrl || item.preview || '',
                 albumName: album.title,
                 genre: 'Álbum',
                 year: album.year || '',
@@ -4067,8 +4225,15 @@
         ? 'Todos os Álbuns, DVDs e Lançamentos Oficiais'
         : 'Discografia Completa & Álbuns Oficiais (Sem Limite)';
       state.specialPage.cover = coverArt || '';
-      state.specialPage.songs = [];
-      state.specialPage.albums = [];
+      const isSameAsPlayingArtist = state.currentSong &&
+        parseSongArtists(state.currentSong.artist, state.currentSong.title).some(a => a.toLowerCase() === cleanName.toLowerCase());
+
+      state.specialPage.songs = (isSameAsPlayingArtist && state.currentRelatedSame && state.currentRelatedSame.length)
+        ? [...state.currentRelatedSame]
+        : [];
+      state.specialPage.albums = (isSameAsPlayingArtist && state.currentArtistAlbums && state.currentArtistAlbums.length)
+        ? [...state.currentArtistAlbums]
+        : [];
       state.specialPage.showAlbumsGrid = Boolean(showAlbumsFirst);
       state.specialPage.searchQuery = '';
       document.getElementById('inpPlaylistInternalSearch').value = '';
@@ -4078,6 +4243,11 @@
       document.getElementById('tabSearch').classList.add('hidden');
       document.getElementById('tabPlaylists').classList.add('hidden');
       document.getElementById('tabCloud').classList.add('hidden');
+
+      const spinBox = document.getElementById('boxSpecialLoadingSpinner');
+      if (spinBox && !state.specialPage.songs.length && !state.specialPage.albums.length) {
+        spinBox.classList.remove('hidden');
+      }
 
       document.getElementById('txtSpecialPlaylistTitle').textContent = cleanName;
       document.getElementById('txtSpecialPlaylistSub').textContent = state.specialPage.subtitle;
@@ -4118,6 +4288,7 @@
             duration: durStr,
             albumArt: art,
             streamUrl: '',
+            previewUrl: it.previewUrl || '',
             albumName: it.collectionName || '',
             genre: it.primaryGenreName || 'Música',
             year: (it.releaseDate || '').slice(0, 4),
@@ -4146,6 +4317,7 @@
             duration: durStr,
             albumArt: art,
             streamUrl: '',
+            previewUrl: it.preview || '',
             albumName: (it.album && it.album.title) || '',
             genre: 'Música',
             year: '',
@@ -4154,6 +4326,8 @@
         });
       }
 
+      const spinEnd = document.getElementById('boxSpecialLoadingSpinner');
+      if (spinEnd) spinEnd.classList.add('hidden');
       if (state.specialPage.open && state.specialPage.title === cleanName) {
         state.specialPage.songs = allSongs;
         state.specialPage.albums = artistAlbums || [];
@@ -4212,6 +4386,7 @@
                 duration: durStr,
                 albumArt: cover || cpl.coverArt,
                 streamUrl: '',
+                previewUrl: item.preview || '',
                 albumName: (item.album && item.album.title) || cpl.title,
                 genre: 'Playlist',
                 year: '',
@@ -4515,65 +4690,23 @@
         listEl.innerHTML = '<div class="text-xs text-white/50 py-6 text-center">Carregando Top 50 Oficial atualizado...</div>';
         let songs = [];
         if (region === 'br') {
-          songs = await fetchItunesRssTopSongs('br', 50);
-          if (songs.length < 35) {
-            const extra = await fetchCatalogMultiQuery(
-              'Henrique & Juliano|Hugo & Guilherme|Jorge & Mateus|Zé Neto & Cristiano|Nattan|Gusttavo Lima|Luan Santana|Simone Mendes',
-              'BR',
-              50
-            );
-            const seen = new Set(songs.map(s => `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`));
-            extra.forEach(s => {
-              const k = `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`;
-              if (!seen.has(k) && songs.length < 50) {
-                seen.add(k);
-                songs.push(s);
-              }
-            });
-          }
+          songs = await fetchCatalogMultiQuery(
+            'Hugo & Guilherme|Henrique & Juliano|Zé Neto & Cristiano|Jorge & Mateus|Felipe & Rodrigo|Nattan|Simone Mendes|Luan Santana|Gusttavo Lima|Diego & Victor Hugo|Guilherme & Benuto|Murilo Huff|Lauana Prado|Ana Castela|Zé Vaqueiro|Menos é Mais',
+            'BR',
+            50
+          );
         } else if (region === 'sa') {
-          const [ar, co, br] = await Promise.all([
-            fetchItunesRssTopSongs('ar', 25),
-            fetchItunesRssTopSongs('co', 25),
-            fetchItunesRssTopSongs('br', 25)
-          ]);
-          const seen = new Set();
-          const maxL = Math.max(ar.length, co.length, br.length);
-          for (let i = 0; i < maxL; i++) {
-            for (const arr of [br, ar, co]) {
-              if (i < arr.length) {
-                const s = arr[i];
-                const k = `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`;
-                if (!seen.has(k) && songs.length < 50) {
-                  seen.add(k);
-                  songs.push(s);
-                }
-              }
-            }
-          }
-          if (songs.length < 35) {
-            const extra = await fetchCatalogMultiQuery('Karol G|Feid|Bad Bunny|Alok|Anitta|Shakira|Maluma', 'BR', 50);
-            extra.forEach(s => {
-              const k = `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`;
-              if (!seen.has(k) && songs.length < 50) {
-                seen.add(k);
-                songs.push(s);
-              }
-            });
-          }
+          songs = await fetchCatalogMultiQuery(
+            'Karol G|Feid|Bad Bunny|Shakira|Maluma|Rauw Alejandro|Myke Towers|Anitta|Alok|Henrique & Juliano|Gusttavo Lima|Peso Pluma',
+            'BR',
+            50
+          );
         } else {
-          songs = await fetchItunesRssTopSongs('us', 50);
-          if (songs.length < 35) {
-            const extra = await fetchCatalogMultiQuery('Bruno Mars|Lady Gaga|The Weeknd|Dua Lipa|Taylor Swift|Coldplay|Billie Eilish', 'US', 50);
-            const seen = new Set(songs.map(s => `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`));
-            extra.forEach(s => {
-              const k = `${s.title.toLowerCase()}|${s.artist.toLowerCase()}`;
-              if (!seen.has(k) && songs.length < 50) {
-                seen.add(k);
-                songs.push(s);
-              }
-            });
-          }
+          songs = await fetchCatalogMultiQuery(
+            'Bruno Mars|The Weeknd|Lady Gaga|Billie Eilish|Sabrina Carpenter|Taylor Swift|Dua Lipa|Coldplay|Post Malone|Rihanna|David Guetta|Calvin Harris',
+            'US',
+            50
+          );
         }
         state.regionCharts[region] = songs.slice(0, 50);
       }
@@ -5822,7 +5955,7 @@
       document.getElementById('btnMiniLike').addEventListener('click', () => toggleLikeSong(state.currentSong));
       document.getElementById('btnMiniPrev').addEventListener('click', playPrevTrack);
       document.getElementById('btnMiniPlayPause').addEventListener('click', togglePlayPause);
-      document.getElementById('btnMiniNext').addEventListener('click', playNextTrack);
+      document.getElementById('btnMiniNext').addEventListener('click', () => playNextTrack(true));
 
       document.getElementById('btnCloseFullPlayer').addEventListener('click', () => {
         document.getElementById('modalFullPlayer').classList.add('hidden');
@@ -5830,7 +5963,7 @@
       document.getElementById('btnFullLike').addEventListener('click', () => toggleLikeSong(state.currentSong));
       document.getElementById('btnFullPrev').addEventListener('click', playPrevTrack);
       document.getElementById('btnFullPlayPause').addEventListener('click', togglePlayPause);
-      document.getElementById('btnFullNext').addEventListener('click', playNextTrack);
+      document.getElementById('btnFullNext').addEventListener('click', () => playNextTrack(true));
       document.getElementById('btnFullRew10').addEventListener('click', () => seekByDelta(-10));
       document.getElementById('btnFullFwd10').addEventListener('click', () => seekByDelta(10));
 
@@ -5931,22 +6064,63 @@
       }
 
 
-      // Botões da Top Bar Nobre Vibe Music (Ondas/Equalizador e Cast/CarPlay)
+      // Botões da Top Bar Nobre Vibe Music (Equalizador Hi-Fi e Conectar/Transmitir Cast)
+      const modalEq = document.getElementById('modalEqualizerHiFi');
+      const modalCast = document.getElementById('modalCastDevices');
+
       document.getElementById('btnHeaderEqWave').addEventListener('click', () => {
-        if (state.currentSong) {
-          document.getElementById('modalFullPlayer').classList.remove('hidden');
-        } else {
-          const chart = state.regionCharts[state.activeRegion] || [];
-          if (chart.length) playFromList(chart, 0);
-        }
+        if (modalEq) modalEq.classList.remove('hidden');
       });
+      document.getElementById('btnCloseEqualizerModal').addEventListener('click', () => {
+        if (modalEq) modalEq.classList.add('hidden');
+      });
+      document.getElementById('btnDoneEqualizerModal').addEventListener('click', () => {
+        if (modalEq) modalEq.classList.add('hidden');
+      });
+      document.querySelectorAll('.btn-eq-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const preset = btn.getAttribute('data-eqpreset');
+          document.querySelectorAll('.btn-eq-preset').forEach(b => {
+            const isSel = b.getAttribute('data-eqpreset') === preset;
+            b.className = `btn-eq-preset flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-xs font-bold ${
+              isSel
+                ? 'bg-[#00e676]/20 border-[#00e676] text-[#00e676]'
+                : 'bg-white/5 border-white/10 text-white/85 hover:bg-white/10'
+            }`;
+            b.lastElementChild.textContent = isSel ? '✓' : '';
+          });
+          showToast('🎛️ Perfil de Áudio Hi-Fi atualizado!');
+        });
+      });
+
       document.getElementById('btnHeaderCastCarPlay').addEventListener('click', () => {
-        if (state.currentSong) {
-          document.getElementById('modalFullPlayer').classList.remove('hidden');
-          showToast('🚗 CarPlay & AirPlay prontos no iPhone!');
-        } else {
-          showToast('Selecione uma música para transmitir no CarPlay / AirPlay!');
+        if (modalCast) modalCast.classList.remove('hidden');
+      });
+      document.getElementById('btnCloseCastModal').addEventListener('click', () => {
+        if (modalCast) modalCast.classList.add('hidden');
+      });
+      document.getElementById('btnDoneCastModal').addEventListener('click', () => {
+        if (modalCast) modalCast.classList.add('hidden');
+      });
+      document.getElementById('btnCastAirPlayAudio').addEventListener('click', () => {
+        if (modalCast) modalCast.classList.add('hidden');
+        if (activeAudio && typeof activeAudio.webkitShowPlaybackTargetPicker === 'function') {
+          try { activeAudio.webkitShowPlaybackTargetPicker(); return; } catch (_) {}
         }
+        showToast('🍏 Use o ícone AirPlay/Bluetooth na Central de Controle do iPhone!');
+      });
+      document.getElementById('btnCastOpenCarPlayMode').addEventListener('click', () => {
+        if (modalCast) modalCast.classList.add('hidden');
+        requestCarPlayWakeLock();
+        const cpOv = document.getElementById('overlayCarPlayBlack');
+        if (cpOv) cpOv.classList.remove('hidden');
+        showToast('🚗 Modo CarPlay Ativo! Toque 2x na tela para acender.');
+      });
+      document.getElementById('btnCastOpenSmartTv').addEventListener('click', () => {
+        if (modalCast) modalCast.classList.add('hidden');
+        const s = state.currentSong;
+        const q = s ? `${s.title} ${s.artist}` : 'Top Brasil Mais Tocadas';
+        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`, '_blank', 'noopener');
       });
 
       // Controles de Aleatório (Shuffle), Repetir 1 (Repeat) e Rádio Infinita no Player em Tela Cheia
